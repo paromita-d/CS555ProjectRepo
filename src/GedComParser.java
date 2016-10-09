@@ -3,11 +3,13 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
-public class GedComParser {	
+public class GedComParser {
+	public static final String absPath = new File("").getAbsolutePath() + "/resources/";
+	
 	public static void main(String[] args) throws Exception {
 		Scanner input = new Scanner(System.in);
-		System.out.print("Provide filepath for GEDCOM file location: ");
-		File file = new File(input.nextLine());
+		System.out.print("Provide GEDCOM file name: ");
+		File file = new File(absPath + input.nextLine());
 		input.close();
 		
 		Set<String> eligibleTags = getEligibleTags();
@@ -34,7 +36,7 @@ public class GedComParser {
 		
 	private static Set<String> getEligibleTags() throws Exception {
 		Set<String> tags = new HashSet<>();
-		Scanner i = new Scanner(new File("C:/work/workspace_CS570/Gedcom/src/tags.txt"));
+		Scanner i = new Scanner(new File(absPath + "tags.txt"));
 		while(i.hasNextLine()) {
 			tags.add(i.nextLine());
 		}
