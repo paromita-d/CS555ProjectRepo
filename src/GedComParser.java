@@ -1,14 +1,17 @@
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-public class GedComParser {
+public class GedComParser {	
 	public static final String absPath = new File("").getAbsolutePath() + "/resources/";
+	private Set<String> eligibleTags = new HashSet<>();
+	private Map<String, Person> personMap = new LinkedHashMap<>();
+	private Map<String, Family> familyMap = new LinkedHashMap<>();
 	
 	public static void main(String[] args) throws Exception {
 		Scanner input = new Scanner(System.in);
@@ -16,11 +19,20 @@ public class GedComParser {
 		File file = new File(absPath + input.nextLine());
 		input.close();
 		
-		Set<String> eligibleTags = getEligibleTags();
-		input = new Scanner(file);
-		
-		Map<String, Person> personMap = new HashMap<>();
-		Map<String, Family> familyMap = new HashMap<>();
+		GedComParser parser = new GedComParser();
+		parser.parse(file);
+	}
+	
+	public GedComParser() throws Exception {
+		Scanner i = new Scanner(new File(absPath + "tags.txt"));
+		while(i.hasNextLine()) {
+			eligibleTags.add(i.nextLine());
+		}
+		i.close();
+	}
+	
+	public void parse(File file) throws Exception {
+		Scanner input = new Scanner(file);
 		Person p = null;
 		Family f = null;
 		NuptialInfo ni = null;
@@ -50,7 +62,6 @@ public class GedComParser {
             }
     		tagName = eligibleTags.contains(tagName) ? tagName : "Invalid tag";
             System.out.println("tag:\t" + tagName);
-            System.out.println();
             
             if(tagName.equals("Invalid Tag"))
             	continue;
@@ -67,7 +78,6 @@ public class GedComParser {
             	Person child = personMap.get(lineArr[2]);
             	f.addChildren(child);
             }
-            
             if(tagName.equals("NAME")) {
             	p.setfName(lineArr[2]);
             	p.setlName(lineArr[3]);
@@ -80,6 +90,10 @@ public class GedComParser {
             }
             if(tagName.equals("FAMS")) {
             	ni.setSpouseOfFamilyId(lineArr[2]);
+            }
+            if(tagName.equals("BIRT") || tagName.equals("DEAT") || tagName.equals("MARR") || tagName.equals("DIV")) {
+            	nextDate = tagName;
+            	continue;
             }
             if(nextDate != null) {
             	SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
@@ -98,29 +112,53 @@ public class GedComParser {
             	if(nextDate.equals("DIV")) {
             		ni.setDivorceDate(dt);
             	}
-            }
-            if(tagName.equals("BIRT") || tagName.equals("DEAT") || tagName.equals("MARR") || tagName.equals("DIV")) {
-            	nextDate = tagName;
-            } else {
             	nextDate = null;
             }
         }
 		input.close();
 		System.out.println("End of parsing");
-		
-		for(Map.Entry<String, Family> entry : familyMap.entrySet()) {
-			System.out.println(entry.getValue());
-			System.out.println("----------------------------------------------------------");
-		}
 	}
-		
-	private static Set<String> getEligibleTags() throws Exception {
-		Set<String> tags = new HashSet<>();
-		Scanner i = new Scanner(new File(absPath + "tags.txt"));
-		while(i.hasNextLine()) {
-			tags.add(i.nextLine());
+
+	public String validateDatesNotInFuture() {
+		Date now = new Date();
+		StringBuilder s = new StringBuilder();
+		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
+			Person p = entry.getValue();
+			if(p.getBirthDate() == null || p.getBirthDate().after(now))
+				s.append("Birth cant be in the future for: " + p + "\r\n");
+			if(p.getDeathDate() != null && p.getDeathDate().after(now))
+				s.append("Death cant be in the future for: " + p + "\r\n");
+			if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+				for(NuptialInfo ni : p.getNuptials()) {
+					if(ni.getMarriageDate() != null && ni.getMarriageDate().after(now))
+						s.append("Marriage cant be in the future for: " + p + "\r\n");
+					if(ni.getDivorceDate() != null && ni.getDivorceDate().after(now))
+						s.append("Divorce cant be in the future for: " + p + "\r\n");
+				}
+			}
 		}
-		i.close();
-		return tags;
+		return s.toString();
+	}
+	
+	public String birthBeforeMarriage() {
+		StringBuilder s = new StringBuilder();
+		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
+			Person p = entry.getValue();
+			if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+				for(NuptialInfo ni : p.getNuptials()) {
+					if(ni.getMarriageDate() != null && ni.getMarriageDate().before(p.getBirthDate()))
+						s.append("Marriage cant be before birth for: " + p + "\r\n");
+				}
+			}
+		}
+		return s.toString();
+	}
+	
+	public String getPersonInfo() {
+		StringBuilder s = new StringBuilder();
+		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
+			s.append("Person: " + entry.getValue() + "\r\n");
+		}
+		return s.toString();
 	}
 }
