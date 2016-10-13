@@ -66,36 +66,42 @@ public class GedComParser {
             if(tagName.equals("Invalid Tag"))
             	continue;
             
-            if(tagName.equals("HUSB")) {
-            	Person husband = personMap.get(lineArr[2]);
-            	f.setHusband(husband);
+            if(level.equals("1")) {
+            	if(tagName.equals("HUSB")) {
+                	Person husband = personMap.get(lineArr[2]);
+                	f.setHusband(husband);
+                }
+                if(tagName.equals("WIFE")) {
+                	Person wife = personMap.get(lineArr[2]);
+                	f.setWife(wife);
+                }
+                if(tagName.equals("CHIL")) {
+                	Person child = personMap.get(lineArr[2]);
+                	f.addChildren(child);
+                }
+                if(tagName.equals("NAME")) {
+                	p.setfName(lineArr[2]);
+                	p.setlName(lineArr[3]);
+                }
+                if(tagName.equals("SEX")) {
+                	p.setSex(lineArr[2]);
+                }
+                if(tagName.equals("FAMC")) {
+                	p.setChildOfFamilyId(lineArr[2]);
+                }
+                if(tagName.equals("FAMS") || tagName.equals("MARR") || tagName.equals("DIV")) {
+                	ni = new NuptialInfo();
+                	p.addNuptials(ni);
+                }
+                if(tagName.equals("FAMS")) {
+                	ni.setSpouseOfFamilyId(lineArr[2]);
+                }
+                if(tagName.equals("BIRT") || tagName.equals("DEAT") || tagName.equals("MARR") || tagName.equals("DIV")) {
+                	nextDate = tagName;
+                	continue;
+                }
             }
-            if(tagName.equals("WIFE")) {
-            	Person wife = personMap.get(lineArr[2]);
-            	f.setWife(wife);
-            }
-            if(tagName.equals("CHIL")) {
-            	Person child = personMap.get(lineArr[2]);
-            	f.addChildren(child);
-            }
-            if(tagName.equals("NAME")) {
-            	p.setfName(lineArr[2]);
-            	p.setlName(lineArr[3]);
-            }
-            if(tagName.equals("SEX")) {
-            	p.setSex(lineArr[2]);
-            }
-            if(tagName.equals("FAMC")) {
-            	p.setChildOfFamilyId(lineArr[2]);
-            }
-            if(tagName.equals("FAMS")) {
-            	ni.setSpouseOfFamilyId(lineArr[2]);
-            }
-            if(tagName.equals("BIRT") || tagName.equals("DEAT") || tagName.equals("MARR") || tagName.equals("DIV")) {
-            	nextDate = tagName;
-            	continue;
-            }
-            if(nextDate != null) {
+            if(level.equals("2") && nextDate != null) {
             	SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
             	Date dt = sdf.parse(lineArr[2] + " " + lineArr[3] + " " + lineArr[4]);
             	if(nextDate.equals("BIRT")) {
@@ -105,9 +111,7 @@ public class GedComParser {
             		p.setDeathDate(dt);
             	}
             	if(nextDate.equals("MARR")) {
-            		ni = new NuptialInfo();
             		ni.setMarriageDate(dt);
-            		p.addNuptials(ni);
             	}
             	if(nextDate.equals("DIV")) {
             		ni.setDivorceDate(dt);
