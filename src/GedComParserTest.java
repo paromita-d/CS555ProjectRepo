@@ -14,8 +14,8 @@ public class GedComParserTest {
 	@Before
 	public void init() throws Exception {
 		parser = new GedComParser();
-		goodFile = new File(GedComParser.absPath + "P01_good.ged");
-		badFile = new File(GedComParser.absPath + "P01_bad.ged");
+		goodFile = new File(GedComParser.absPath + "P06_good.ged");
+		badFile = new File(GedComParser.absPath + "P06_bad.ged");
 	}
 
 	@Test
