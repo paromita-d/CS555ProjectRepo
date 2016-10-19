@@ -184,6 +184,36 @@ public class GedComParser {
 		return s.toString();
 	}
 	
+	public String marriageBeforeDeath() {
+		StringBuilder s = new StringBuilder();
+		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
+			Person p = entry.getValue();
+			if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+				for(NuptialInfo ni : p.getNuptials()) {
+					if(ni.getMarriageDate() != null && p.getDeathDate() != null && 
+							p.getDeathDate().before(ni.getMarriageDate()))
+						s.append("Death cant be before marriage for: " + p + "\r\n");
+				}
+			}
+		}
+		return s.toString();
+	}
+	
+	public String divorceBeforeDeath() {
+		StringBuilder s = new StringBuilder();
+		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
+			Person p = entry.getValue();
+			if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+				for(NuptialInfo ni : p.getNuptials()) {
+					if(ni.getDivorceDate() != null && p.getDeathDate() != null && 
+							p.getDeathDate().before(ni.getDivorceDate()))
+						s.append("Death cant be before divorce for: " + p + "\r\n");
+				}
+			}
+		}
+		return s.toString();
+	}
+	
 	public String getPersonInfo() {
 		StringBuilder s = new StringBuilder();
 		for(Map.Entry<String, Person> entry : personMap.entrySet()) {

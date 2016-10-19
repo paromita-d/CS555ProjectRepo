@@ -81,4 +81,36 @@ public class GedComParserTest {
 		Assert.assertNotEquals("", s);
 		Files.write(Paths.get(GedComParser.absPath + "testMarriageAfterDivorce.txt"), s.getBytes());
 	}
+	
+	@Test
+	public void testMarriageBeforeDeath() throws Exception {
+		parser.parse(goodFile);
+		String s = parser.marriageBeforeDeath();
+		Assert.assertEquals("", s);
+		Files.write(Paths.get(GedComParser.absPath + "testMarriageBeforeDeath.txt"), parser.getPersonInfo().getBytes());
+	}
+	
+	@Test
+	public void testMarriageAfterDeath() throws Exception {
+		parser.parse(badFile);
+		String s = parser.marriageBeforeDeath();
+		Assert.assertNotEquals("", s);
+		Files.write(Paths.get(GedComParser.absPath + "testMarriageAfterDeath.txt"), s.getBytes());
+	}
+	
+	@Test
+	public void testDivorceBeforeDeath() throws Exception {
+		parser.parse(goodFile);
+		String s = parser.divorceBeforeDeath();
+		Assert.assertEquals("", s);
+		Files.write(Paths.get(GedComParser.absPath + "testDivorceBeforeDeath.txt"), parser.getPersonInfo().getBytes());
+	}
+	
+	@Test
+	public void testDivorceAfterDeath() throws Exception {
+		parser.parse(badFile);
+		String s = parser.divorceBeforeDeath();
+		Assert.assertNotEquals("", s);
+		Files.write(Paths.get(GedComParser.absPath + "testDivorceAfterDeath.txt"), s.getBytes());
+	}
 }
