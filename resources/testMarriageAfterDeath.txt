@@ -1,0 +1,1 @@
+Death cant be before marriage for: Person [id=@I4@, fName=Michelle, lName=/Alexis/, sex=F, birthDate=Tue Jan 01 00:00:00 EST 1985, deathDate=Thu Nov 01 00:00:00 EDT 2018, childOfFamilyId=null, nuptials=[NuptialInfo [spouseOfFamilyId=@F1@, marriageDate=Thu Aug 01 00:00:00 EDT 2019, divorceDate=null]]]
