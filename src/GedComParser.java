@@ -89,7 +89,7 @@ public class GedComParser {
                 if(tagName.equals("FAMC")) {
                 	p.setChildOfFamilyId(lineArr[2]);
                 }
-                if(tagName.equals("FAMS") || tagName.equals("MARR") || tagName.equals("DIV")) {
+                if(tagName.equals("MARR")) {
                 	ni = new NuptialInfo();
                 	p.addNuptials(ni);
                 }
@@ -152,6 +152,32 @@ public class GedComParser {
 				for(NuptialInfo ni : p.getNuptials()) {
 					if(ni.getMarriageDate() != null && ni.getMarriageDate().before(p.getBirthDate()))
 						s.append("Marriage cant be before birth for: " + p + "\r\n");
+				}
+			}
+		}
+		return s.toString();
+	}
+	
+	public String birthBeforeDeath() {
+		StringBuilder s = new StringBuilder();
+		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
+			Person p = entry.getValue();
+			if(p.getDeathDate() != null && p.getDeathDate().before(p.getBirthDate())) {
+					s.append("Death cant be before birth for: " + p + "\r\n");
+			}
+		}
+		return s.toString();
+	}
+	
+	public String marriageBeforeDivorce() {
+		StringBuilder s = new StringBuilder();
+		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
+			Person p = entry.getValue();
+			if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+				for(NuptialInfo ni : p.getNuptials()) {
+					if(ni.getMarriageDate() != null && ni.getDivorceDate() != null && 
+							ni.getDivorceDate().before(ni.getMarriageDate()))
+						s.append("Divorce cant be before marriage for: " + p + "\r\n");
 				}
 			}
 		}
