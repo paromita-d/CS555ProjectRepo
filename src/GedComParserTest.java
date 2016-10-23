@@ -154,10 +154,10 @@ public class GedComParserTest {
 	}
 	
 	@Test
-	public void testLessThan150() throws Exception {
+	public void testAgeLessThan150() throws Exception {
 		parser.parse(goodFile);
 		for(Map.Entry<String, Person> entry : parser.getPersonMap().entrySet()) {
-			String str = parser.lessThan150(entry.getValue());
+			String str = parser.ageLessThan150(entry.getValue());
 			s.append(str);
 		}
 		Assert.assertEquals("", s.toString());
@@ -165,14 +165,36 @@ public class GedComParserTest {
 	}
 	
 	@Test
-	public void testMoreThan150() throws Exception {
+	public void testAgeMoreThan150() throws Exception {
 		parser.parse(badFile);
 		for(Map.Entry<String, Person> entry : parser.getPersonMap().entrySet()) {
-			String str = parser.lessThan150(entry.getValue());
+			String str = parser.ageLessThan150(entry.getValue());
 			s.append(str);
 		}
 		Assert.assertNotEquals("", s.toString());
-		Files.write(Paths.get(GedComParser.absPath + "testMoreThan150.txt"), s.toString().getBytes());
+		Files.write(Paths.get(GedComParser.absPath + "testAgeMoreThan150.txt"), s.toString().getBytes());
+	}
+	
+	@Test
+	public void testMarriageAgeMoreThan14() throws Exception {
+		parser.parse(goodFile);
+		for(Map.Entry<String, Person> entry : parser.getPersonMap().entrySet()) {
+			String str = parser.marriageAtGreaterThan14(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertEquals("", s.toString());
+		writePersonInfo();
+	}
+	
+	@Test
+	public void testMarriageAgeLessThan14() throws Exception {
+		parser.parse(badFile);
+		for(Map.Entry<String, Person> entry : parser.getPersonMap().entrySet()) {
+			String str = parser.marriageAtGreaterThan14(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertNotEquals("", s.toString());
+		Files.write(Paths.get(GedComParser.absPath + "testMarriageAgeLessThan14.txt"), s.toString().getBytes());
 	}
 	
 	private void writePersonInfo() throws Exception {

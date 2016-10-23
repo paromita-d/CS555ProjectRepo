@@ -197,13 +197,25 @@ public class GedComParser {
 		return s.toString();
 	}
 	
-	public String lessThan150(Person p) {
+	public String ageLessThan150(Person p) {
 		String s = "";
 		Date validateWith = p.getDeathDate() == null ? new Date() : p.getDeathDate();
 		long age = TimeUnit.MILLISECONDS.toDays(validateWith.getTime() - p.getBirthDate().getTime()) / 365;
 		if(age > 150)
 			s = "Age (" + age + ") cant be more than 150: " + p + "\r\n";
 		return s;
+	}
+	
+	public String marriageAtGreaterThan14(Person p) {
+		StringBuilder s = new StringBuilder();
+		if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+			for(NuptialInfo ni : p.getNuptials()) {
+				long ageAtMarriage = TimeUnit.MILLISECONDS.toDays(ni.getMarriageDate().getTime() - p.getBirthDate().getTime()) / 365;
+				if(ageAtMarriage < 14)
+					s.append("Age at Marriage (" + ageAtMarriage + ") cant be less than 14: " + p + "\r\n");
+			}
+		}
+		return s.toString();
 	}
 	
 	public Map<String, Person> getPersonMap() {
