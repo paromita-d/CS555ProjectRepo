@@ -1,0 +1,2 @@
+Age (221) cant be more than 150: Person [id=@I7@, fName=Harry, lName=/Potter/, sex=M, birthDate=Thu Oct 01 00:00:00 EST 1795, deathDate=null, childOfFamilyId=@F3@, nuptials=[]]
+Age (205) cant be more than 150: Person [id=@I8@, fName=Sheila, lName=/Potter/, sex=F, birthDate=Thu Oct 01 00:00:00 EST 1795, deathDate=Sun Oct 01 00:00:00 EDT 2000, childOfFamilyId=@F3@, nuptials=[]]

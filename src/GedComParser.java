@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class GedComParser {	
 	public static final String absPath = new File("").getAbsolutePath() + "/resources/";
@@ -123,102 +124,93 @@ public class GedComParser {
 		System.out.println("End of parsing");
 	}
 
-	public String validateDatesNotInFuture() {
+	public String validateDatesNotInFuture(Person p) {
 		Date now = new Date();
 		StringBuilder s = new StringBuilder();
-		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
-			Person p = entry.getValue();
-			if(p.getBirthDate() == null || p.getBirthDate().after(now))
-				s.append("Birth cant be in the future for: " + p + "\r\n");
-			if(p.getDeathDate() != null && p.getDeathDate().after(now))
-				s.append("Death cant be in the future for: " + p + "\r\n");
-			if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
-				for(NuptialInfo ni : p.getNuptials()) {
-					if(ni.getMarriageDate() != null && ni.getMarriageDate().after(now))
-						s.append("Marriage cant be in the future for: " + p + "\r\n");
-					if(ni.getDivorceDate() != null && ni.getDivorceDate().after(now))
-						s.append("Divorce cant be in the future for: " + p + "\r\n");
-				}
+		if(p.getBirthDate() == null || p.getBirthDate().after(now))
+			s.append("Birth cant be in the future for: " + p + "\r\n");
+		if(p.getDeathDate() != null && p.getDeathDate().after(now))
+			s.append("Death cant be in the future for: " + p + "\r\n");
+		if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+			for(NuptialInfo ni : p.getNuptials()) {
+				if(ni.getMarriageDate() != null && ni.getMarriageDate().after(now))
+					s.append("Marriage cant be in the future for: " + p + "\r\n");
+				if(ni.getDivorceDate() != null && ni.getDivorceDate().after(now))
+					s.append("Divorce cant be in the future for: " + p + "\r\n");
 			}
 		}
 		return s.toString();
 	}
 	
-	public String birthBeforeMarriage() {
+	public String birthBeforeMarriage(Person p) {
 		StringBuilder s = new StringBuilder();
-		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
-			Person p = entry.getValue();
-			if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
-				for(NuptialInfo ni : p.getNuptials()) {
-					if(ni.getMarriageDate() != null && ni.getMarriageDate().before(p.getBirthDate()))
-						s.append("Marriage cant be before birth for: " + p + "\r\n");
-				}
+		if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+			for(NuptialInfo ni : p.getNuptials()) {
+				if(ni.getMarriageDate() != null && ni.getMarriageDate().before(p.getBirthDate()))
+					s.append("Marriage cant be before birth for: " + p + "\r\n");
 			}
 		}
 		return s.toString();
 	}
 	
-	public String birthBeforeDeath() {
+	public String birthBeforeDeath(Person p) {
+		String s = "";
+		if(p.getDeathDate() != null && p.getDeathDate().before(p.getBirthDate())) {
+				s = "Death cant be before birth for: " + p + "\r\n";
+		}
+		return s;
+	}
+	
+	public String marriageBeforeDivorce(Person p) {
 		StringBuilder s = new StringBuilder();
-		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
-			Person p = entry.getValue();
-			if(p.getDeathDate() != null && p.getDeathDate().before(p.getBirthDate())) {
-					s.append("Death cant be before birth for: " + p + "\r\n");
+		if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+			for(NuptialInfo ni : p.getNuptials()) {
+				if(ni.getMarriageDate() != null && ni.getDivorceDate() != null && 
+						ni.getDivorceDate().before(ni.getMarriageDate()))
+					s.append("Divorce cant be before marriage for: " + p + "\r\n");
 			}
 		}
 		return s.toString();
 	}
 	
-	public String marriageBeforeDivorce() {
+	public String marriageBeforeDeath(Person p) {
 		StringBuilder s = new StringBuilder();
-		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
-			Person p = entry.getValue();
-			if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
-				for(NuptialInfo ni : p.getNuptials()) {
-					if(ni.getMarriageDate() != null && ni.getDivorceDate() != null && 
-							ni.getDivorceDate().before(ni.getMarriageDate()))
-						s.append("Divorce cant be before marriage for: " + p + "\r\n");
-				}
+		if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+			for(NuptialInfo ni : p.getNuptials()) {
+				if(ni.getMarriageDate() != null && p.getDeathDate() != null && 
+						p.getDeathDate().before(ni.getMarriageDate()))
+					s.append("Death cant be before marriage for: " + p + "\r\n");
 			}
 		}
 		return s.toString();
 	}
 	
-	public String marriageBeforeDeath() {
+	public String divorceBeforeDeath(Person p) {
 		StringBuilder s = new StringBuilder();
-		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
-			Person p = entry.getValue();
-			if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
-				for(NuptialInfo ni : p.getNuptials()) {
-					if(ni.getMarriageDate() != null && p.getDeathDate() != null && 
-							p.getDeathDate().before(ni.getMarriageDate()))
-						s.append("Death cant be before marriage for: " + p + "\r\n");
-				}
+		if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
+			for(NuptialInfo ni : p.getNuptials()) {
+				if(ni.getDivorceDate() != null && p.getDeathDate() != null && 
+						p.getDeathDate().before(ni.getDivorceDate()))
+					s.append("Death cant be before divorce for: " + p + "\r\n");
 			}
 		}
 		return s.toString();
 	}
 	
-	public String divorceBeforeDeath() {
-		StringBuilder s = new StringBuilder();
-		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
-			Person p = entry.getValue();
-			if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
-				for(NuptialInfo ni : p.getNuptials()) {
-					if(ni.getDivorceDate() != null && p.getDeathDate() != null && 
-							p.getDeathDate().before(ni.getDivorceDate()))
-						s.append("Death cant be before divorce for: " + p + "\r\n");
-				}
-			}
-		}
-		return s.toString();
+	public String lessThan150(Person p) {
+		String s = "";
+		Date validateWith = p.getDeathDate() == null ? new Date() : p.getDeathDate();
+		long age = TimeUnit.MILLISECONDS.toDays(validateWith.getTime() - p.getBirthDate().getTime()) / 365;
+		if(age > 150)
+			s = "Age (" + age + ") cant be more than 150: " + p + "\r\n";
+		return s;
 	}
 	
-	public String getPersonInfo() {
-		StringBuilder s = new StringBuilder();
-		for(Map.Entry<String, Person> entry : personMap.entrySet()) {
-			s.append("Person: " + entry.getValue() + "\r\n");
-		}
-		return s.toString();
+	public Map<String, Person> getPersonMap() {
+		return personMap;
+	}
+
+	public Map<String, Family> getFamilyMap() {
+		return familyMap;
 	}
 }
