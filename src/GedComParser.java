@@ -200,7 +200,7 @@ public class GedComParser {
 	public String ageLessThan150(Person p) {
 		String s = "";
 		Date validateWith = p.getDeathDate() == null ? new Date() : p.getDeathDate();
-		long age = TimeUnit.MILLISECONDS.toDays(validateWith.getTime() - p.getBirthDate().getTime()) / 365;
+		long age = yearDiff(validateWith, p.getBirthDate());
 		if(age > 150)
 			s = "Age (" + age + ") cant be more than 150: " + p + "\r\n";
 		return s;
@@ -210,12 +210,31 @@ public class GedComParser {
 		StringBuilder s = new StringBuilder();
 		if(p.getNuptials() != null && !p.getNuptials().isEmpty()) {
 			for(NuptialInfo ni : p.getNuptials()) {
-				long ageAtMarriage = TimeUnit.MILLISECONDS.toDays(ni.getMarriageDate().getTime() - p.getBirthDate().getTime()) / 365;
+				long ageAtMarriage = yearDiff(ni.getMarriageDate(), p.getBirthDate());
 				if(ageAtMarriage < 14)
 					s.append("Age at Marriage (" + ageAtMarriage + ") cant be less than 14: " + p + "\r\n");
 			}
 		}
 		return s.toString();
+	}
+	
+	public String parentsNotTooOld(Family f) {
+		StringBuilder s = new StringBuilder();
+		if(f.getChildren() != null) {
+			for(Person child : f.getChildren()) {
+				long momsAge = yearDiff(child.getBirthDate(), f.getWife().getBirthDate());
+				if(momsAge > 60)
+					s.append("Mom's age at ChildBirth (" + momsAge + ") cant be greater than 60: Mom -->" + f.getWife() + "; Child --> " + child + "\r\n");
+				long dadsAge = yearDiff(child.getBirthDate(), f.getHusband().getBirthDate());
+				if(dadsAge > 80)
+					s.append("Dad's age at ChildBirth (" + dadsAge + ") cant be greater than 80: Dad -->" + f.getHusband() + "; Child --> " + child + "\r\n");
+			}
+		}
+		return s.toString();
+	}
+	
+	private long yearDiff(Date d1, Date d2) {
+		return TimeUnit.MILLISECONDS.toDays(d1.getTime() - d2.getTime()) / 365;
 	}
 	
 	public Map<String, Person> getPersonMap() {

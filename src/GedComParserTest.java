@@ -197,6 +197,28 @@ public class GedComParserTest {
 		Files.write(Paths.get(GedComParser.absPath + "testMarriageAgeLessThan14.txt"), s.toString().getBytes());
 	}
 	
+	@Test
+	public void testParentsNotTooOld() throws Exception {
+		parser.parse(goodFile);
+		for(Map.Entry<String, Family> entry : parser.getFamilyMap().entrySet()) {
+			String str = parser.parentsNotTooOld(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertEquals("", s.toString());
+		writePersonInfo();
+	}
+	
+	@Test
+	public void testParentsTooOld() throws Exception {
+		parser.parse(badFile);
+		for(Map.Entry<String, Family> entry : parser.getFamilyMap().entrySet()) {
+			String str = parser.parentsNotTooOld(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertNotEquals("", s.toString());
+		Files.write(Paths.get(GedComParser.absPath + "testParentsTooOld.txt"), s.toString().getBytes());
+	}
+	
 	private void writePersonInfo() throws Exception {
 		StringBuilder s = new StringBuilder();
 		for(Map.Entry<String, Person> entry : parser.getPersonMap().entrySet()) {
