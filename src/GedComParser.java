@@ -233,6 +233,24 @@ public class GedComParser {
 		return s.toString();
 	}
 	
+	public String siblingSpacing(Family f) {
+		StringBuilder s = new StringBuilder();
+		if(f.getChildren() != null) {
+			for(int i = 0; i < f.getChildren().size(); i++) {
+				for(int j = i + 1; j < f.getChildren().size(); j++) {
+					Person c1 = f.getChildren().get(i);
+					Person c2 = f.getChildren().get(j);
+					long siblingDiff = TimeUnit.MILLISECONDS.toDays(c1.getBirthDate().getTime() - c2.getBirthDate().getTime());
+					siblingDiff = Math.abs(siblingDiff);
+					if(siblingDiff > 2 && siblingDiff < 240) {
+						s.append("Sibling's age diff (" + siblingDiff + ") cant be greater than 2 and less than 240: Child1 -->" + c1 + "; Child2 --> " + c2 + "\r\n");
+					}
+				}
+			}
+		}
+		return s.toString();
+	}
+	
 	private long yearDiff(Date d1, Date d2) {
 		return TimeUnit.MILLISECONDS.toDays(d1.getTime() - d2.getTime()) / 365;
 	}

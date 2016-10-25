@@ -219,6 +219,28 @@ public class GedComParserTest {
 		Files.write(Paths.get(GedComParser.absPath + "testParentsTooOld.txt"), s.toString().getBytes());
 	}
 	
+	@Test
+	public void testValidSiblingSpacing() throws Exception {
+		parser.parse(goodFile);
+		for(Map.Entry<String, Family> entry : parser.getFamilyMap().entrySet()) {
+			String str = parser.siblingSpacing(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertEquals("", s.toString());
+		writePersonInfo();
+	}
+	
+	@Test
+	public void testInvalidSiblingSpacing() throws Exception {
+		parser.parse(badFile);
+		for(Map.Entry<String, Family> entry : parser.getFamilyMap().entrySet()) {
+			String str = parser.siblingSpacing(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertNotEquals("", s.toString());
+		Files.write(Paths.get(GedComParser.absPath + "testInvalidSiblingSpacing.txt"), s.toString().getBytes());
+	}
+	
 	private void writePersonInfo() throws Exception {
 		StringBuilder s = new StringBuilder();
 		for(Map.Entry<String, Person> entry : parser.getPersonMap().entrySet()) {
