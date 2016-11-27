@@ -285,6 +285,44 @@ public class GedComParserTest {
 		Files.write(Paths.get(GedComParser.absPath + "testInvalidGenderForRole.txt"), s.toString().getBytes());
 	}
 	
+	@Test
+	public void testCoupleNotSibling() throws Exception {
+		parser.parse(goodFile);
+		for(Map.Entry<String, Family> entry : parser.getFamilyMap().entrySet()) {
+			String str = parser.coupleNotSibling(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertEquals("", s.toString());
+		writePersonInfo();
+	}
+	
+	@Test
+	public void testCoupleIsSibling() throws Exception {
+		parser.parse(badFile);
+		for(Map.Entry<String, Family> entry : parser.getFamilyMap().entrySet()) {
+			String str = parser.coupleNotSibling(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertNotEquals("", s.toString());
+		Files.write(Paths.get(GedComParser.absPath + "testCoupleIsSibling.txt"), s.toString().getBytes());
+	}
+	
+	@Test
+	public void testNameDOBUnique() throws Exception {
+		parser.parse(goodFile);
+		String str = parser.uniqueNameAndBirthDay();
+		Assert.assertEquals("", str);
+		writePersonInfo();
+	}
+	
+	@Test
+	public void testNameDOBNotUnique() throws Exception {
+		parser.parse(badFile);
+		String str = parser.uniqueNameAndBirthDay();
+		Assert.assertNotEquals("", str);
+		Files.write(Paths.get(GedComParser.absPath + "testNameDOBNotUnique.txt"), str.getBytes());
+	}
+	
 	private void writePersonInfo() throws Exception {
 		StringBuilder s = new StringBuilder();
 		for(Map.Entry<String, Person> entry : parser.getPersonMap().entrySet()) {

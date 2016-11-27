@@ -269,6 +269,29 @@ public class GedComParser {
 		return s.toString();
 	}
 	
+	public String coupleNotSibling(Family f) {
+		String s = "";
+		if(f.getHusband().getChildOfFamilyId() != null && 
+			f.getWife().getChildOfFamilyId() != null &&
+			f.getHusband().getChildOfFamilyId().equals(f.getWife().getChildOfFamilyId())) {
+			s = "Husband and wife of " + f.getId() + " are children of same family(" + f.getWife().getChildOfFamilyId() + ")\r\n";
+		}
+		return s.toString();
+	}
+	
+	public String uniqueNameAndBirthDay() {
+		StringBuilder s = new StringBuilder();
+		Set<String> unique = new HashSet<>();
+		for(Person p : personMap.values()) {
+			String u = p.getfName() + " " + p.getlName() + " " + p.getBirthDate().toString();
+			if(unique.contains(u))
+				s.append("Multiple persons found having same name and DOB: " + u);
+			else
+				unique.add(u);		
+		}
+		return s.toString();
+	}
+	
 	private long yearDiff(Date d1, Date d2) {
 		return TimeUnit.MILLISECONDS.toDays(d1.getTime() - d2.getTime()) / 365;
 	}
