@@ -241,6 +241,50 @@ public class GedComParserTest {
 		Files.write(Paths.get(GedComParser.absPath + "testInvalidSiblingSpacing.txt"), s.toString().getBytes());
 	}
 	
+	@Test
+	public void testValidSiblingCount() throws Exception {
+		parser.parse(goodFile);
+		for(Map.Entry<String, Family> entry : parser.getFamilyMap().entrySet()) {
+			String str = parser.fewerSiblings(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertEquals("", s.toString());
+		writePersonInfo();
+	}
+	
+	@Test
+	public void testInvalidSiblingCount() throws Exception {
+		parser.parse(badFile);
+		for(Map.Entry<String, Family> entry : parser.getFamilyMap().entrySet()) {
+			String str = parser.fewerSiblings(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertNotEquals("", s.toString());
+		Files.write(Paths.get(GedComParser.absPath + "testInvalidSiblingCount.txt"), s.toString().getBytes());
+	}
+	
+	@Test
+	public void testValidGenderForRole() throws Exception {
+		parser.parse(goodFile);
+		for(Map.Entry<String, Family> entry : parser.getFamilyMap().entrySet()) {
+			String str = parser.genderForRole(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertEquals("", s.toString());
+		writePersonInfo();
+	}
+	
+	@Test
+	public void testInvalidGenderForRole() throws Exception {
+		parser.parse(badFile);
+		for(Map.Entry<String, Family> entry : parser.getFamilyMap().entrySet()) {
+			String str = parser.genderForRole(entry.getValue());
+			s.append(str);
+		}
+		Assert.assertNotEquals("", s.toString());
+		Files.write(Paths.get(GedComParser.absPath + "testInvalidGenderForRole.txt"), s.toString().getBytes());
+	}
+	
 	private void writePersonInfo() throws Exception {
 		StringBuilder s = new StringBuilder();
 		for(Map.Entry<String, Person> entry : parser.getPersonMap().entrySet()) {

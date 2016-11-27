@@ -1,0 +1,2 @@
+Husband's gender of family(@F1@) cant be F
+Wife's gender of family(@F1@) cant be M

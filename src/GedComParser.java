@@ -251,6 +251,24 @@ public class GedComParser {
 		return s.toString();
 	}
 	
+	public String fewerSiblings(Family f) {
+		String s = "";
+		if(f.getChildren() != null && f.getChildren().size() >= 15) {
+			s = "Family (" + f.getId() + ") cant have more than 15 children, but has -->" + f.getChildren().size() + "\r\n";
+		}
+		return s;
+	}
+	
+	public String genderForRole(Family f) {
+		StringBuilder s = new StringBuilder();
+		if(!f.getHusband().getSex().equals("M"))
+			s.append("Husband's gender of family(" + f.getId() + ") cant be " + f.getHusband().getSex() + "\r\n");
+		if(!f.getWife().getSex().equals("F"))
+			s.append("Wife's gender of family(" + f.getId() + ") cant be " + f.getWife().getSex() + "\r\n");
+
+		return s.toString();
+	}
+	
 	private long yearDiff(Date d1, Date d2) {
 		return TimeUnit.MILLISECONDS.toDays(d1.getTime() - d2.getTime()) / 365;
 	}
